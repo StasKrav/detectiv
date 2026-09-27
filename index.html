@@ -196,11 +196,31 @@
     padding: 20px; margin-bottom: 16px;
   }
   .card h3 { font-size: 17px; margin-bottom: 8px; color: var(--text); }
-  .meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
-  .meta .tag { background: var(--bg-subtle); padding: 3px 10px; border-radius: 20px; }
-  .meta .tag.hot { background: #3a3020; color: var(--gold); }
-  .meta .tag.closed { background: #2f1f1f; color: var(--red); }
-  .meta .tag.reward { background: #2a3528; color: var(--green); }
+  .meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: var(--text-mute);
+    margin-bottom: 12px;
+    margin-top: 10px;
+    align-items: center;
+  }
+  .meta .tag {
+    background: transparent;
+    padding: 0;
+    color: var(--text-mute);
+    font-weight: 400;
+  }
+  .meta .tag + .tag::before {
+    content: '·';
+    margin-right: 10px;
+    color: var(--text-mute);
+    opacity: 0.6;
+  }
+  .meta .tag.hot { background: transparent; color: var(--text-dim); }
+  .meta .tag.closed { background: transparent; color: var(--red); opacity: 0.8; }
+  .meta .tag.reward { background: transparent; color: var(--text-mute); }
 
   .riddle-text { font-size: 15px; color: var(--text); margin-bottom: 14px; white-space: pre-wrap; }
   .story-text { font-size: 15px; color: var(--text); margin-bottom: 14px; white-space: pre-wrap; line-height: 1.7; }
@@ -208,11 +228,22 @@
 
   .input-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
   input, textarea, select {
-    background: var(--bg-input); border: 1px solid var(--border); color: var(--text);
-    padding: 10px 12px; border-radius: 8px; font-size: 14px;
-    font-family: inherit; width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    width: 100%;
+    transition: border-color 0.15s, background 0.15s;
   }
-  input:focus, textarea:focus { outline: none; border-color: var(--gold); }
+  input::placeholder, textarea::placeholder { color: var(--text-mute); }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--text-dim);
+    background: var(--bg-input);
+  }
   textarea { resize: vertical; min-height: 80px; }
   textarea.tall { min-height: 140px; }
   label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; margin-top: 12px; }
@@ -220,12 +251,21 @@
   .btn {
     background: var(--bg-panel); color: var(--text); border: 1px solid var(--border);
     padding: 8px 16px; border-radius: 8px; cursor: pointer;
-    font-size: 14px; transition: all 0.15s;
+    font-size: 13px; transition: all 0.15s;
   }
   .btn:hover { background: var(--bg-hover); border-color: var(--border-strong); }
-  .btn.primary { background: var(--gold); color: #2b2b2b; border-color: var(--gold); font-weight: 600; }
-  .btn.primary:hover { background: var(--gold-hover); }
-  .btn.ghost { background: transparent; }
+  .btn.primary {
+    background: transparent;
+    color: var(--gold);
+    border-color: var(--gold);
+    font-weight: 600;
+  }
+  .btn.primary:hover {
+    background: rgba(240, 223, 175, 0.1);
+    color: var(--gold-hover);
+    border-color: var(--gold-hover);
+  }
+  .btn.ghost { background: transparent; font-size: 11px; }
   .btn.danger { border-color: #5a3a3a; color: var(--red); }
   .btn.small { padding: 4px 10px; font-size: 12px; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -278,6 +318,14 @@
   .shop-item .desc { font-size: 12px; color: var(--text-dim); }
   .shop-item .price { color: var(--gold); font-weight: 600; font-size: 14px; margin: 0 14px; }
 
+  .icon {
+    display: inline-block;
+    vertical-align: -0.15em;   /* выравнивание по базовой линии текста */
+    width: 1em;                /* размер = размер шрифта */
+    height: 1em;
+    flex-shrink: 0;            /* не сжимается во flex-контейнерах */
+  }
+
   /* ===== АДАПТИВ ===== */
   .mobile-menu-btn {
     display: none; background: transparent; border: none;
@@ -321,7 +369,7 @@
     <div class="logo">🕵️ <span>Шерлок</span></div>
     <input class="search" placeholder="Поиск загадок и историй...">
     <div class="topbar-right">
-      <div class="balance-badge"><span>🪙</span> <span id="balance-value">0</span></div>
+      <div class="balance-badge"><span>PUS</span> <span id="balance-value">0</span></div>
       <div class="user-chip" id="user-chip">Детектив</div>
     </div>
   </header>
@@ -331,31 +379,31 @@
     <div class="nav-section">
       <div class="nav-section-title">Разделы</div>
       <div class="nav-item active" data-tab="riddles">
-        <span class="ico">🧩</span> Биржа <span class="badge" id="badge-riddles">0</span>
+        <span class="ico"></span> Биржа <span class="badge" id="badge-riddles">0</span>
       </div>
       <div class="nav-item" data-tab="stories">
-        <span class="ico">📖</span> Истории <span class="badge" id="badge-stories">0</span>
+        <span class="ico"></span> Истории <span class="badge" id="badge-stories">0</span>
       </div>
       <div class="nav-item" data-tab="shop">
-        <span class="ico">🛒</span> Лавка
+        <span class="ico"></span> Лавка
       </div>
       <div class="nav-item" data-tab="profile">
-        <span class="ico">👤</span> Профиль
+        <span class="ico"></span> Профиль
       </div>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">Скоро</div>
       <div class="nav-item" style="opacity:0.4;cursor:default">
-        <span class="ico">🏆</span> Турниры
+        <span class="ico"></span> Турниры
       </div>
       <div class="nav-item" style="opacity:0.4;cursor:default">
-        <span class="ico">👥</span> Друзья
+        <span class="ico"></span> Друзья
       </div>
       <div class="nav-item" style="opacity:0.4;cursor:default">
-        <span class="ico">🎖️</span> Достижения
+        <span class="ico"></span> Достижения
       </div>
       <div class="nav-item" style="opacity:0.4;cursor:default">
-        <span class="ico">✏️</span> Редакция
+        <span class="ico"></span> Редакция
       </div>
     </div>
   </aside>
@@ -371,7 +419,7 @@
   <!-- ПРАВАЯ КОЛОНКА -->
   <aside class="right">
     <div class="issue-widget widget">
-      <h4>📖 Текущий выпуск</h4>
+      <h4>Текущий выпуск</h4>
       <div class="big" id="issue-num">№1</div>
       <p id="issue-info">Открытых историй: 0</p>
     </div>
@@ -438,6 +486,18 @@ const ECONOMY = {
   costStoryPublish: 1
 };
 
+// ================== ИКОНКИ ==========================
+const ICON_LAMP = `<svg width="16" height="16" viewBox="0 0 504 536" xmlns="http://www.w3.org/2000/svg">
+<path d="M188,380 L316,348" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
+<path d="M188,412 L316,380" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
+<path d="M316,316 C444,220 380,60 252,60" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
+<path d="M252,60 C92,60 60,252 188,316" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
+<path d="M188,316 L188,348" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
+<path d="M220,444 C252,476 252,476 284,444" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
+</svg>
+
+
+`;
 // ==================== СТОП-СЛОВА ====================
 const BAD_WORDS = ['хуй', 'пизд', 'бляд', 'ебат', 'ебал', 'сука', 'мразь', 'гандон', 'долбоеб', 'залуп'];
 function hasBadWords(t) { const l = t.toLowerCase(); return BAD_WORDS.some(w => l.includes(w)); }
@@ -545,7 +605,7 @@ function updateHeader() {
     return '<div class="top-player' + me + '">'
       + '<span class="pos ' + cls + '">' + (i + 1) + '</span>'
       + '<span class="name">' + escapeHtml(pl.name) + '</span>'
-      + '<span class="val">' + pl.puaros + ' 🪙</span>'
+      + '<span class="val">' + pl.puaros + ' PUS</span>'
       + '</div>';
   }).join('');
 }
@@ -586,26 +646,26 @@ function riddleCard(r, closed) {
   const tags = ['<span class="tag">от ' + escapeHtml(r.author) + '</span>'];
   if (!closed) tags.push('<span class="tag hot">⏱ ' + timeLeft(r) + '</span>');
   else tags.push('<span class="tag closed">закрыта</span>');
-  tags.push('<span class="tag">👥 ' + r.solvers.length + '/' + r.maxSolvers + '</span>');
-  tags.push('<span class="tag reward">🪙 +' + ECONOMY.rewardSolved + '</span>');
+  tags.push('<span class="tag">отгадавших ' + r.solvers.length + '/' + r.maxSolvers + '</span>');
+  tags.push('<span class="tag reward">PUS +' + ECONOMY.rewardSolved + '</span>');
 
   let body = '<div class="riddle-text">' + escapeHtml(r.text) + '</div>';
   body += '<div class="meta">' + tags.join('') + '</div>';
-  body += r.solvers.length
-    ? '<div class="answers">Разгадали: <b>' + r.solvers.map(escapeHtml).join(', ') + '</b></div>'
-    : '<div class="answers">Ещё никто не разгадал.</div>';
 
   if (!closed && !solvedByMe) {
     body += '<div class="input-row" style="margin-top:14px">'
       + '<input type="text" placeholder="Твой ответ..." data-answer-input="' + r.id + '">'
       + '<button class="btn primary" data-guess="' + r.id + '">Ответить</button></div>'
       + '<div class="input-row">'
-      + '<button class="btn ghost" data-hint="' + r.id + '">💡 Подсказка (🪙 ' + ECONOMY.costHint + ')</button>'
-      + '<button class="btn ghost" data-like="' + r.id + '">👍 ' + r.likes + '</button>'
-      + '<button class="btn ghost" data-report="' + r.id + '">🚩</button></div>';
+      + '<button class="btn ghost" data-hint="' + r.id + '">'
+
+      +   ' Подсказка (' + ECONOMY.costHint + ' PUS)'
+      + '</button>'
+      + '<button class="btn ghost" data-like="' + r.id + '">Like ' + r.likes + '</button>'
+      + '<button class="btn ghost" data-report="' + r.id + '">жалоба</button></div>';
   } else if (solvedByMe) {
     body += '<div style="margin-top:12px"><span class="status-badge">✓ Ты разгадал</span> '
-      + '<button class="btn ghost small" data-like="' + r.id + '">👍 ' + r.likes + '</button></div>';
+      + '<button class="btn ghost small" data-like="' + r.id + '">Like ' + r.likes + '</button></div>';
   } else {
     body += '<div style="margin-top:12px;font-size:13px;color:#8a92a3">Ответ: <b style="color:#d4a24a">' + escapeHtml(r.answer) + '</b></div>';
   }
@@ -680,7 +740,7 @@ function bindRiddleEvents() {
     const db = DB.load();
     db.riddles.push({ id: 'r' + Date.now(), text, answer, hint, timeLimitMin, maxSolvers, author: db.profile.name, createdAt: Date.now(), solvers: [], attempts: 0, likes: 0, closed: false });
     db.profile.authored++;
-    DB.save(db); toast('✅ Опубликовано'); riddleView = 'active'; renderRiddles();
+    DB.save(db); toast('Опубликовано'); riddleView = 'active'; renderRiddles();
   };
 }
 
@@ -695,7 +755,7 @@ function renderStories() {
   let html = '<div class="sub-nav">'
     + '<button data-sv="open" class="' + (storyView === 'open' ? 'active' : '') + '">Открытые (' + open.length + ')</button>'
     + '<button data-sv="archive" class="' + (storyView === 'archive' ? 'active' : '') + '">Прошлые выпуски (' + closed.length + ')</button>'
-    + '<button data-sv="create" class="' + (storyView === 'create' ? 'active' : '') + '">+ Написать (🪙 ' + ECONOMY.costStoryPublish + ')</button>'
+    + '<button data-sv="create" class="' + (storyView === 'create' ? 'active' : '') + '">+ Написать (' + ECONOMY.costStoryPublish + ' PUS)</button>'
     + '</div>';
 
   if (storyView === 'create') html += renderCreateStoryForm();
@@ -726,12 +786,12 @@ function storyCard(s, closed) {
     if (myVersion) {
       html += '<div class="version-item"><div class="author">Твоя версия:</div>' + escapeHtml(myVersion.text) + '</div>';
     } else {
-      html += '<label>Твоя версия (где ложь?)</label>'
-        + '<textarea id="sv-' + s.id + '" placeholder="Мне кажется, врёт..."></textarea>'
+      html += 
+         '<textarea id="sv-' + s.id + '" placeholder="Напиши свою версию правды..."></textarea>'
         + '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">'
         + '<button class="btn primary" data-send-version="' + s.id + '">Отправить версию</button>'
-        + (s.hint ? '<button class="btn ghost" data-story-hint="' + s.id + '">💡 Подсказка (🪙 ' + ECONOMY.costHint + ')</button>' : '')
-        + '<button class="btn ghost" data-report-story="' + s.id + '">🚩</button></div>';
+        + (s.hint ? '<button class="btn ghost" data-story-hint="' + s.id + '">Подсказка (' + ECONOMY.costHint + ' PUS)</button>' : '')
+        + '<button class="btn ghost" data-report-story="' + s.id + '">жалоба</button></div>';
     }
   } else {
     html += '<div style="margin-top:12px;padding:12px;background:#16221a;border:1px solid #2a5a2a;border-radius:8px">'
@@ -767,7 +827,7 @@ function renderCreateStoryForm() {
     <textarea id="st-answer"></textarea>
     <label>Подсказка</label>
     <input id="st-hint">
-    <div style="margin-top:18px"><button class="btn primary" id="st-submit" ${!canAfford ? 'disabled' : ''}>Опубликовать (🪙 ${ECONOMY.costStoryPublish})</button></div>
+    <div style="margin-top:18px"><button class="btn primary" id="st-submit" ${!canAfford ? 'disabled' : ''}>Опубликовать</button></div>
   </div>`;
 }
 
@@ -959,7 +1019,11 @@ document.getElementById('mobile-menu').onclick = () => {
 seedIfEmpty();
 updateHeader();
 renderRiddles();
-setInterval(() => { if (!document.getElementById('tab-riddles').classList.contains('hidden')) renderRiddles(); }, 30000);
+setInterval(() => {
+  if (document.getElementById('tab-riddles').classList.contains('hidden')) return;
+  if (riddleView === 'create') return;   // ← не трогаем форму
+  renderRiddles();
+}, 30000);
 </script>
 </body>
 </html>
