@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Шерлок — биржа загадок и детективные истории</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0a0c10; color: #e6e6e6; min-height: 100vh;
+    line-height: 1.5;
+  }
+  .layout {
+    background: #0f1115;
+    box-shadow: 0 0 0 1px #1a1e26;
+  }
+
+  /* ===== СВЯТОЙ ГРААЛЬ ===== */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 720px) 260px;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "header header header"
+      "left   main   right";
+    min-height: 100vh;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  header.topbar {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    background: #161a22;
+    border-bottom: 1px solid #232833;
+    position: sticky; top: 0; z-index: 10;
+    gap: 16px;
+  }
+  .logo { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+  .logo span { color: #d4a24a; }
+  .search {
+    flex: 1; max-width: 400px;
+    background: #0f1115; border: 1px solid #2a2f3a;
+    padding: 8px 14px; border-radius: 8px;
+    color: #e6e6e6; font-size: 14px;
+  }
+  .search:focus { outline: none; border-color: #d4a24a; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .balance-badge {
+    background: linear-gradient(135deg, #3a2a12, #2a1f0a);
+    border: 1px solid #d4a24a; border-radius: 20px;
+    padding: 6px 14px; font-size: 14px; font-weight: 600; color: #d4a24a;
+    display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  }
+  .user-chip {
+    background: #1c2029; border: 1px solid #2a2f3a;
+    padding: 6px 14px; border-radius: 20px; font-size: 14px;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .user-chip:hover { border-color: #d4a24a; }
+
+  aside.left {
+    grid-area: left;
+    background: #13161d;
+    border-right: 1px solid #232833;
+    padding: 20px 0;
+    position: sticky; top: 57px;
+    height: calc(100vh - 57px);
+    overflow-y: auto;
+  }
+  aside.right {
+    grid-area: right;
+    background: #13161d;
+    border-left: 1px solid #232833;
+    padding: 20px 16px;
+    position: sticky; top: 57px;
+    height: calc(100vh - 57px);
+    overflow-y: auto;
+  }
+  main.content {
+    grid-area: main;
+    padding: 24px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* ===== ЛЕВАЯ КОЛОНКА ===== */
+  .nav-section { margin-bottom: 24px; }
+  .nav-section-title {
+    font-size: 11px; color: #5a6273; text-transform: uppercase;
+    letter-spacing: 1px; padding: 0 20px 8px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; cursor: pointer;
+    font-size: 14px; color: #cfd4dd;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { background: #1a1e26; color: #fff; }
+  .nav-item.active {
+    background: #1a1e26; color: #d4a24a;
+    border-left-color: #d4a24a; font-weight: 600;
+  }
+  .nav-item .ico { font-size: 16px; width: 20px; text-align: center; }
+  .nav-item .badge {
+    margin-left: auto; background: #2a2f3a;
+    font-size: 11px; padding: 2px 8px; border-radius: 10px;
+    color: #8a92a3;
+  }
+  .nav-item.active .badge { background: #3a2a12; color: #d4a24a; }
+
+  /* ===== ПРАВАЯ КОЛОНКА ===== */
+  .widget {
+    background: #161a22; border: 1px solid #232833;
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .widget h4 {
+    font-size: 12px; color: #8a92a3; text-transform: uppercase;
+    letter-spacing: 0.8px; margin-bottom: 12px;
+  }
+  .widget-stat { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+  .widget-stat span:last-child { color: #d4a24a; font-weight: 600; }
+
+  .rank-progress {
+    margin-top: 10px; height: 6px; background: #0f1115;
+    border-radius: 3px; overflow: hidden;
+  }
+  .rank-progress > div {
+    height: 100%; background: linear-gradient(90deg, #d4a24a, #e0b05a);
+    transition: width 0.3s;
+  }
+
+  .top-player {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 0; font-size: 13px;
+  }
+  .top-player .pos {
+    width: 20px; color: #5a6273; font-weight: 600; text-align: center;
+  }
+  .top-player .pos.gold { color: #d4a24a; }
+  .top-player .pos.silver { color: #a8b0bd; }
+  .top-player .pos.bronze { color: #c08a4a; }
+  .top-player .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .top-player .val { color: #d4a24a; font-weight: 600; }
+  .top-player.me { background: #1a1e26; border-radius: 6px; padding: 7px 8px; margin: 0 -8px; }
+
+  .issue-widget { border-color: #2a3a4a; }
+  .issue-widget h4 { color: #8ab4e0; }
+  .issue-widget .big { font-size: 22px; font-weight: 700; color: #8ab4e0; margin-bottom: 4px; }
+  .issue-widget p { font-size: 12px; color: #8a92a3; }
+
+  /* ===== ЦЕНТР ===== */
+  .sub-nav { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+  .sub-nav button {
+    background: transparent; color: #8a92a3; border: 1px solid #2a2f3a;
+    padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px;
+  }
+  .sub-nav button.active { background: #232833; color: #d4a24a; border-color: #3a4150; }
+
+  .card {
+    background: #161a22; border: 1px solid #232833; border-radius: 12px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .card h3 { font-size: 17px; margin-bottom: 8px; }
+  .meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: #8a92a3; margin-bottom: 12px; }
+  .meta .tag { background: #232833; padding: 3px 10px; border-radius: 20px; }
+  .meta .tag.hot { background: #3a2a12; color: #d4a24a; }
+  .meta .tag.closed { background: #2a1a1a; color: #e08a8a; }
+  .meta .tag.reward { background: #2a3a2a; color: #8ae08a; }
+
+  .riddle-text { font-size: 15px; color: #cfd4dd; margin-bottom: 14px; white-space: pre-wrap; }
+  .story-text { font-size: 15px; color: #cfd4dd; margin-bottom: 14px; white-space: pre-wrap; line-height: 1.7; }
+  .story-img { max-width: 100%; border-radius: 10px; margin-bottom: 14px; display: block; }
+
+  .input-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  input, textarea, select {
+    background: #0f1115; border: 1px solid #2a2f3a; color: #e6e6e6;
+    padding: 10px 12px; border-radius: 8px; font-size: 14px;
+    font-family: inherit; width: 100%;
+  }
+  input:focus, textarea:focus { outline: none; border-color: #d4a24a; }
+  textarea { resize: vertical; min-height: 80px; }
+  textarea.tall { min-height: 140px; }
+  label { display: block; font-size: 13px; color: #8a92a3; margin-bottom: 6px; margin-top: 12px; }
+
+  .btn {
+    background: #1c2029; color: #e6e6e6; border: 1px solid #2a2f3a;
+    padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    font-size: 14px; transition: all 0.15s;
+  }
+  .btn:hover { background: #252a35; border-color: #3a4150; }
+  .btn.primary { background: #d4a24a; color: #0f1115; border-color: #d4a24a; font-weight: 600; }
+  .btn.primary:hover { background: #e0b05a; }
+  .btn.ghost { background: transparent; }
+  .btn.danger { border-color: #5a2a2a; color: #e08a8a; }
+  .btn.small { padding: 4px 10px; font-size: 12px; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .status-badge {
+    display: inline-block; background: #2a3a2a; color: #8ae08a;
+    padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  }
+  .status-badge.gold { background: #3a2a12; color: #d4a24a; }
+
+  .empty { text-align: center; color: #5a6273; padding: 40px 20px; font-size: 14px; }
+
+  .answers { margin-top: 10px; font-size: 13px; color: #8a92a3; }
+
+  .version-item {
+    background: #0f1115; border: 1px solid #232833; border-radius: 8px;
+    padding: 10px 14px; margin-top: 8px; font-size: 13px;
+  }
+  .version-item.correct { border-color: #2a5a2a; background: #16221a; }
+  .version-item .author { color: #8a92a3; font-size: 12px; margin-bottom: 4px; }
+
+  .hidden { display: none; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #1c2029; border: 1px solid #3a4150; padding: 12px 20px;
+    border-radius: 10px; font-size: 14px; z-index: 100;
+    opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    max-width: 90%; text-align: center;
+  }
+  .toast.show { opacity: 1; }
+  .toast.reward { border-color: #d4a24a; color: #d4a24a; font-weight: 600; }
+
+  .transaction {
+    font-size: 13px; padding: 6px 0; border-bottom: 1px solid #1c2029;
+    display: flex; justify-content: space-between;
+  }
+  .transaction:last-child { border-bottom: none; }
+  .transaction .amount.plus { color: #8ae08a; font-weight: 600; }
+  .transaction .amount.minus { color: #e08a8a; font-weight: 600; }
+
+  .shop-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid #232833;
+  }
+  .shop-item:last-child { border-bottom: none; }
+  .shop-item .info { flex: 1; }
+  .shop-item .name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .shop-item .desc { font-size: 12px; color: #8a92a3; }
+  .shop-item .price { color: #d4a24a; font-weight: 600; font-size: 14px; margin: 0 14px; }
+
+  /* ===== АДАПТИВ ===== */
+  .mobile-menu-btn {
+    display: none; background: transparent; border: none;
+    color: #e6e6e6; font-size: 22px; cursor: pointer;
+  }
+
+  @media (max-width: 980px) {
+    .layout {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "header"
+        "main"
+        "right";
+    }
+    aside.left {
+      position: fixed; top: 57px; left: 0;
+      width: 240px; height: calc(100vh - 57px);
+      transform: translateX(-100%);
+      transition: transform 0.25s; z-index: 20;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+    }
+    aside.left.open { transform: translateX(0); }
+    aside.right {
+      position: static; height: auto;
+      border-left: none; border-top: 1px solid #232833;
+    }
+    main.content { padding: 16px; }
+    .mobile-menu-btn { display: block; }
+    .search { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ШАПКА -->
+  <header class="topbar">
+    <button class="mobile-menu-btn" id="mobile-menu">☰</button>
+    <div class="logo">🕵️ <span>Шерлок</span></div>
+    <input class="search" placeholder="Поиск загадок и историй...">
+    <div class="topbar-right">
+      <div class="balance-badge"><span>🪙</span> <span id="balance-value">0</span></div>
+      <div class="user-chip" id="user-chip">Детектив</div>
+    </div>
+  </header>
+
+  <!-- ЛЕВАЯ КОЛОНКА -->
+  <aside class="left" id="sidebar">
+    <div class="nav-section">
+      <div class="nav-section-title">Разделы</div>
+      <div class="nav-item active" data-tab="riddles">
+        <span class="ico">🧩</span> Биржа <span class="badge" id="badge-riddles">0</span>
+      </div>
+      <div class="nav-item" data-tab="stories">
+        <span class="ico">📖</span> Истории <span class="badge" id="badge-stories">0</span>
+      </div>
+      <div class="nav-item" data-tab="shop">
+        <span class="ico">🛒</span> Лавка
+      </div>
+      <div class="nav-item" data-tab="profile">
+        <span class="ico">👤</span> Профиль
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Скоро</div>
+      <div class="nav-item" style="opacity:0.4;cursor:default">
+        <span class="ico">🏆</span> Турниры
+      </div>
+      <div class="nav-item" style="opacity:0.4;cursor:default">
+        <span class="ico">👥</span> Друзья
+      </div>
+      <div class="nav-item" style="opacity:0.4;cursor:default">
+        <span class="ico">🎖️</span> Достижения
+      </div>
+      <div class="nav-item" style="opacity:0.4;cursor:default">
+        <span class="ico">✏️</span> Редакция
+      </div>
+    </div>
+  </aside>
+
+  <!-- ЦЕНТР -->
+  <main class="content">
+    <div id="tab-riddles"></div>
+    <div id="tab-stories" class="hidden"></div>
+    <div id="tab-shop" class="hidden"></div>
+    <div id="tab-profile" class="hidden"></div>
+  </main>
+
+  <!-- ПРАВАЯ КОЛОНКА -->
+  <aside class="right">
+    <div class="issue-widget widget">
+      <h4>📖 Текущий выпуск</h4>
+      <div class="big" id="issue-num">№1</div>
+      <p id="issue-info">Открытых историй: 0</p>
+    </div>
+
+    <div class="widget">
+      <h4>Твой статус</h4>
+      <div class="widget-stat"><span>Ранг</span><span id="w-rank">Наблюдатель</span></div>
+      <div class="widget-stat"><span>Разгадано</span><span id="w-solved">0</span></div>
+      <div class="widget-stat"><span>Пуаросов</span><span id="w-balance">0</span></div>
+      <div class="rank-progress"><div id="w-progress" style="width:0%"></div></div>
+    </div>
+
+    <div class="widget">
+      <h4>Топ игроков</h4>
+      <div id="top-players"></div>
+    </div>
+
+    <div class="widget">
+      <h4>Сейчас онлайн</h4>
+      <p style="font-size:13px;color:#8a92a3">
+        <span style="color:#8ae08a">●</span> 1 детектив (ты)
+      </p>
+    </div>
+  </aside>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== ХРАНИЛИЩЕ ====================
+const STORAGE_KEY = 'sherlock_db_v4';
+const DB = {
+  load() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+    return {
+      riddles: [],
+      stories: [],
+      profile: {
+        name: 'Детектив',
+        solved: 0, authored: 0, storiesWritten: 0,
+        balance: 10, transactions: []
+      },
+      issueNumber: 1,
+      fakeTopPlayers: [
+        { name: 'Шерлок', puaros: 42 },
+        { name: 'Эркюль', puaros: 31 },
+        { name: 'Мисс Марпл', puaros: 28 },
+        { name: 'Ватсон', puaros: 19 },
+        { name: 'Лейстрейд', puaros: 12 }
+      ]
+    };
+  },
+  save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+};
+
+// ==================== ЭКОНОМИКА ====================
+const ECONOMY = {
+  rewardSolved: 1,
+  rewardSolvedFirst: 2,
+  rewardStoryQuality: 3,
+  costHint: 1,
+  costSecondTry: 2,
+  costStoryPublish: 1
+};
+
+// ==================== СТОП-СЛОВА ====================
+const BAD_WORDS = ['хуй', 'пизд', 'бляд', 'ебат', 'ебал', 'сука', 'мразь', 'гандон', 'долбоеб', 'залуп'];
+function hasBadWords(t) { const l = t.toLowerCase(); return BAD_WORDS.some(w => l.includes(w)); }
+
+// ==================== СИД ====================
+function seedIfEmpty() {
+  const db = DB.load();
+  if (db.riddles.length > 0 || db.stories.length > 0) return;
+  const now = Date.now();
+  db.riddles = [
+    { id: 's1', text: 'Он принадлежит вам, но другие используют его чаще, чем вы. Что это?', answer: 'имя', hint: 'Это есть у каждого, но неосязаемо.', timeLimitMin: 60, maxSolvers: 5, author: 'Шерлок', createdAt: now, solvers: [], attempts: 0, likes: 0, closed: false },
+    { id: 's2', text: 'Чем больше из неё берёшь, тем больше она становится. Что это?', answer: 'яма', hint: 'Копать не обязательно, но можно.', timeLimitMin: 60, maxSolvers: 5, author: 'Пуаро', createdAt: now, solvers: [], attempts: 0, likes: 0, closed: false },
+    { id: 's3', text: 'Я не живой, но у меня есть пять пальцев. Что это?', answer: 'перчатка', hint: 'Надевается на руку.', timeLimitMin: 60, maxSolvers: 5, author: 'Марпл', createdAt: now, solvers: [], attempts: 0, likes: 0, closed: false }
+  ];
+  db.stories = [{
+    id: 'st1', title: 'Пропавшая брошь',
+    text: 'Вчера вечером я зашёл к леди Маргарет на чай. Она жаловалась, что потеряла фамильную брошь — подарок бабушки. Мы обыскали всю гостиную, но безрезультатно. Я предложил вызвать полицию, но леди Маргарет отказалась: "Это семейное дело, не хочу огласки". Я ушёл ни с чем. Сегодня утром мне позвонил дворецкий и сказал, что брошь нашлась — в саду, под розовым кустом. Странно: вчера вечером шёл сильный дождь, и все дорожки размыло. Как брошь могла оказаться в саду только к утру?',
+    answer: 'Брошь не могла оказаться в саду утром — её туда кто-то подложил. Дворецкий врёт: если бы брошь лежала под кустом со вчера, дождь бы её смыл или запачкал.',
+    hint: 'Обрати внимание на погоду.', image: '', author: 'Шерлок',
+    createdAt: now, closed: false, versions: [], correctGuessers: []
+  }];
+  DB.save(db);
+}
+
+// ==================== УТИЛИТЫ ====================
+function toast(msg, isReward) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('reward', !!isReward);
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2400);
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function normalize(s) { return s.toLowerCase().trim().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]/g, ''); }
+function isClosedRiddle(r) {
+  if (r.closed) return true;
+  if ((Date.now() - r.createdAt) / 60000 >= r.timeLimitMin) return true;
+  if (r.solvers.length >= r.maxSolvers) return true;
+  return false;
+}
+function timeLeft(r) {
+  const left = Math.max(0, r.timeLimitMin - (Date.now() - r.createdAt) / 60000);
+  if (left === 0) return 'вышло';
+  if (left < 1) return '< 1 мин';
+  return Math.ceil(left) + ' мин';
+}
+
+// ==================== ЭКОНОМИКА ====================
+function addPuaros(amount, reason) {
+  const db = DB.load();
+  db.profile.balance += amount;
+  db.profile.transactions.unshift({ amount, reason, date: Date.now() });
+  if (db.profile.transactions.length > 50) db.profile.transactions.length = 50;
+  DB.save(db);
+  updateHeader();
+}
+function spendPuaros(amount, reason) {
+  const db = DB.load();
+  if (db.profile.balance < amount) return false;
+  db.profile.balance -= amount;
+  db.profile.transactions.unshift({ amount: -amount, reason, date: Date.now() });
+  if (db.profile.transactions.length > 50) db.profile.transactions.length = 50;
+  DB.save(db);
+  updateHeader();
+  return true;
+}
+
+// ==================== ОБНОВЛЕНИЕ ШАПКИ И ПРАВОЙ КОЛОНКИ ====================
+function updateHeader() {
+  const db = DB.load();
+  document.getElementById('balance-value').textContent = db.profile.balance;
+  document.getElementById('user-chip').textContent = db.profile.name;
+
+  const p = db.profile;
+  const rank = p.solved >= 10 ? 'Шерлок' : p.solved >= 5 ? 'Детектив' : p.solved >= 1 ? 'Новичок' : 'Наблюдатель';
+  document.getElementById('w-rank').textContent = rank;
+  document.getElementById('w-solved').textContent = p.solved;
+  document.getElementById('w-balance').textContent = p.balance;
+
+  // прогресс до следующего ранга
+  let progress = 0;
+  if (p.solved < 1) progress = 0;
+  else if (p.solved < 5) progress = (p.solved / 5) * 100;
+  else if (p.solved < 10) progress = ((p.solved - 5) / 5) * 100;
+  else progress = 100;
+  document.getElementById('w-progress').style.width = progress + '%';
+
+  // счётчики в левой колонке
+  document.getElementById('badge-riddles').textContent = db.riddles.filter(r => !isClosedRiddle(r)).length;
+  document.getElementById('badge-stories').textContent = db.stories.filter(s => !s.closed).length;
+
+  // выпуск
+  document.getElementById('issue-num').textContent = '№' + db.issueNumber;
+  document.getElementById('issue-info').textContent = 'Открытых историй: ' + db.stories.filter(s => !s.closed).length;
+
+  // топ игроков
+  const allPlayers = [...db.fakeTopPlayers, { name: p.name, puaros: p.balance, me: true }]
+    .sort((a, b) => b.puaros - a.puaros);
+  document.getElementById('top-players').innerHTML = allPlayers.slice(0, 5).map((pl, i) => {
+    const cls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    const me = pl.name === p.name ? ' me' : '';
+    return '<div class="top-player' + me + '">'
+      + '<span class="pos ' + cls + '">' + (i + 1) + '</span>'
+      + '<span class="name">' + escapeHtml(pl.name) + '</span>'
+      + '<span class="val">' + pl.puaros + ' 🪙</span>'
+      + '</div>';
+  }).join('');
+}
+
+// ==================== ВКЛАДКА: БИРЖА ====================
+let riddleView = 'active';
+function renderRiddles() {
+  const db = DB.load();
+  const el = document.getElementById('tab-riddles');
+  const active = db.riddles.filter(r => !isClosedRiddle(r));
+  const closed = db.riddles.filter(r => isClosedRiddle(r));
+
+  let html = '<div class="sub-nav">'
+    + '<button data-rv="active" class="' + (riddleView === 'active' ? 'active' : '') + '">Активные (' + active.length + ')</button>'
+    + '<button data-rv="archive" class="' + (riddleView === 'archive' ? 'active' : '') + '">Архив (' + closed.length + ')</button>'
+    + '<button data-rv="create" class="' + (riddleView === 'create' ? 'active' : '') + '">+ Загадать</button>'
+    + '</div>';
+
+  if (riddleView === 'create') html += renderCreateRiddleForm();
+  else if (riddleView === 'active') {
+    if (active.length === 0) html += '<div class="empty">Пока пусто</div>';
+    else {
+      active.sort((a, b) => (b.solvers.length + b.likes) - (a.solvers.length + a.likes));
+      active.forEach(r => html += riddleCard(r));
+    }
+  } else {
+    if (closed.length === 0) html += '<div class="empty">Архив пуст</div>';
+    else closed.forEach(r => html += riddleCard(r, true));
+  }
+  el.innerHTML = html;
+  bindRiddleEvents();
+  updateHeader();
+}
+
+function riddleCard(r, closed) {
+  const myName = DB.load().profile.name;
+  const solvedByMe = r.solvers.includes(myName);
+  const tags = ['<span class="tag">от ' + escapeHtml(r.author) + '</span>'];
+  if (!closed) tags.push('<span class="tag hot">⏱ ' + timeLeft(r) + '</span>');
+  else tags.push('<span class="tag closed">закрыта</span>');
+  tags.push('<span class="tag">👥 ' + r.solvers.length + '/' + r.maxSolvers + '</span>');
+  tags.push('<span class="tag reward">🪙 +' + ECONOMY.rewardSolved + '</span>');
+
+  let body = '<div class="riddle-text">' + escapeHtml(r.text) + '</div>';
+  body += '<div class="meta">' + tags.join('') + '</div>';
+  body += r.solvers.length
+    ? '<div class="answers">Разгадали: <b>' + r.solvers.map(escapeHtml).join(', ') + '</b></div>'
+    : '<div class="answers">Ещё никто не разгадал.</div>';
+
+  if (!closed && !solvedByMe) {
+    body += '<div class="input-row" style="margin-top:14px">'
+      + '<input type="text" placeholder="Твой ответ..." data-answer-input="' + r.id + '">'
+      + '<button class="btn primary" data-guess="' + r.id + '">Ответить</button></div>'
+      + '<div class="input-row">'
+      + '<button class="btn ghost" data-hint="' + r.id + '">💡 Подсказка (🪙 ' + ECONOMY.costHint + ')</button>'
+      + '<button class="btn ghost" data-like="' + r.id + '">👍 ' + r.likes + '</button>'
+      + '<button class="btn ghost" data-report="' + r.id + '">🚩</button></div>';
+  } else if (solvedByMe) {
+    body += '<div style="margin-top:12px"><span class="status-badge">✓ Ты разгадал</span> '
+      + '<button class="btn ghost small" data-like="' + r.id + '">👍 ' + r.likes + '</button></div>';
+  } else {
+    body += '<div style="margin-top:12px;font-size:13px;color:#8a92a3">Ответ: <b style="color:#d4a24a">' + escapeHtml(r.answer) + '</b></div>';
+  }
+  return '<div class="card">' + body + '</div>';
+}
+
+function renderCreateRiddleForm() {
+  return `<div class="card">
+    <h3>Загадать загадку</h3>
+    <p style="font-size:13px;color:#8a92a3;margin-bottom:12px">Публикация бесплатная. За разгадки твоей загадки капают пуаросы.</p>
+    <label>Текст загадки</label>
+    <textarea id="c-text" placeholder="Опиши загадку..."></textarea>
+    <label>Правильный ответ</label>
+    <input id="c-answer" placeholder="например: имя">
+    <label>Подсказка (опционально)</label>
+    <input id="c-hint" placeholder="намёк">
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:140px"><label>Время (мин)</label><input id="c-time" type="number" value="60" min="1"></div>
+      <div style="flex:1;min-width:140px"><label>Макс. разгадавших</label><input id="c-solvers" type="number" value="5" min="1"></div>
+    </div>
+    <div style="margin-top:18px"><button class="btn primary" id="c-submit">Опубликовать</button></div>
+  </div>`;
+}
+
+function bindRiddleEvents() {
+  document.querySelectorAll('[data-rv]').forEach(b => b.onclick = () => { riddleView = b.dataset.rv; renderRiddles(); });
+  document.querySelectorAll('[data-guess]').forEach(btn => btn.onclick = () => {
+    const id = btn.dataset.guess;
+    const input = document.querySelector('[data-answer-input="' + id + '"]');
+    const val = input.value.trim();
+    if (!val) return toast('Введи ответ');
+    const db = DB.load();
+    const r = db.riddles.find(x => x.id === id);
+    if (!r || isClosedRiddle(r)) return toast('Загадка закрыта');
+    r.attempts++;
+    if (normalize(val) === normalize(r.answer)) {
+      const wasFirst = r.solvers.length === 0;
+      if (!r.solvers.includes(db.profile.name)) {
+        r.solvers.push(db.profile.name);
+        db.profile.solved++;
+        DB.save(db);
+        const reward = wasFirst ? ECONOMY.rewardSolved + ECONOMY.rewardSolvedFirst : ECONOMY.rewardSolved;
+        addPuaros(reward, wasFirst ? 'Первым разгадал загадку' : 'Разгадал загадку');
+        toast('🎉 Верно! +' + reward + ' пуарос' + (wasFirst ? ' (первый!)' : ''), true);
+      } else { DB.save(db); toast('🎉 Верно!'); }
+    } else { DB.save(db); toast('❌ Неверно'); }
+    renderRiddles();
+  });
+  document.querySelectorAll('[data-hint]').forEach(btn => btn.onclick = () => {
+    const r = DB.load().riddles.find(x => x.id === btn.dataset.hint);
+    if (!spendPuaros(ECONOMY.costHint, 'Подсказка к загадке')) return toast('Недостаточно пуаросов');
+    toast('💡 ' + r.hint);
+    renderRiddles();
+  });
+  document.querySelectorAll('[data-like]').forEach(btn => btn.onclick = () => {
+    const db = DB.load();
+    const r = db.riddles.find(x => x.id === btn.dataset.like);
+    r.likes++; DB.save(db); renderRiddles();
+  });
+  document.querySelectorAll('[data-report]').forEach(btn => btn.onclick = () => toast('🚩 Жалоба отправлена'));
+  const sub = document.getElementById('c-submit');
+  if (sub) sub.onclick = () => {
+    const text = document.getElementById('c-text').value.trim();
+    const answer = document.getElementById('c-answer').value.trim();
+    const hint = document.getElementById('c-hint').value.trim();
+    const timeLimitMin = parseInt(document.getElementById('c-time').value) || 60;
+    const maxSolvers = parseInt(document.getElementById('c-solvers').value) || 5;
+    if (text.length < 15) return toast('Текст короткий');
+    if (answer.length < 2) return toast('Ответ короткий');
+    if (hasBadWords(text) || hasBadWords(answer)) return toast('🚫 Недопустимые слова');
+    if (normalize(text).includes(normalize(answer))) return toast('Ответ не должен быть в тексте');
+    const db = DB.load();
+    db.riddles.push({ id: 'r' + Date.now(), text, answer, hint, timeLimitMin, maxSolvers, author: db.profile.name, createdAt: Date.now(), solvers: [], attempts: 0, likes: 0, closed: false });
+    db.profile.authored++;
+    DB.save(db); toast('✅ Опубликовано'); riddleView = 'active'; renderRiddles();
+  };
+}
+
+// ==================== ВКЛАДКА: ИСТОРИИ ====================
+let storyView = 'open';
+function renderStories() {
+  const db = DB.load();
+  const el = document.getElementById('tab-stories');
+  const open = db.stories.filter(s => !s.closed);
+  const closed = db.stories.filter(s => s.closed);
+
+  let html = '<div class="sub-nav">'
+    + '<button data-sv="open" class="' + (storyView === 'open' ? 'active' : '') + '">Открытые (' + open.length + ')</button>'
+    + '<button data-sv="archive" class="' + (storyView === 'archive' ? 'active' : '') + '">Прошлые выпуски (' + closed.length + ')</button>'
+    + '<button data-sv="create" class="' + (storyView === 'create' ? 'active' : '') + '">+ Написать (🪙 ' + ECONOMY.costStoryPublish + ')</button>'
+    + '</div>';
+
+  if (storyView === 'create') html += renderCreateStoryForm();
+  else if (storyView === 'open') {
+    if (open.length === 0) html += '<div class="empty">Пока нет открытых историй</div>';
+    else open.forEach(s => html += storyCard(s, false));
+  } else {
+    if (closed.length === 0) html += '<div class="empty">Прошлых выпусков пока нет</div>';
+    else closed.forEach(s => html += storyCard(s, true));
+  }
+  el.innerHTML = html;
+  bindStoryEvents();
+  updateHeader();
+}
+
+function storyCard(s, closed) {
+  const myName = DB.load().profile.name;
+  const myVersion = s.versions.find(v => v.author === myName);
+  let html = '<div class="card">';
+  if (s.title) html += '<h3>' + escapeHtml(s.title) + '</h3>';
+  if (s.image) html += '<img src="' + escapeHtml(s.image) + '" class="story-img" alt="">';
+  html += '<div class="story-text">' + escapeHtml(s.text) + '</div>';
+  html += '<div class="meta"><span class="tag">от ' + escapeHtml(s.author) + '</span>'
+    + '<span class="tag ' + (closed ? 'closed' : 'hot') + '">' + (closed ? 'выпуск закрыт' : 'открыта') + '</span>'
+    + '<span class="tag">💬 ' + s.versions.length + ' версий</span></div>';
+
+  if (!closed) {
+    if (myVersion) {
+      html += '<div class="version-item"><div class="author">Твоя версия:</div>' + escapeHtml(myVersion.text) + '</div>';
+    } else {
+      html += '<label>Твоя версия (где ложь?)</label>'
+        + '<textarea id="sv-' + s.id + '" placeholder="Мне кажется, врёт..."></textarea>'
+        + '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">'
+        + '<button class="btn primary" data-send-version="' + s.id + '">Отправить версию</button>'
+        + (s.hint ? '<button class="btn ghost" data-story-hint="' + s.id + '">💡 Подсказка (🪙 ' + ECONOMY.costHint + ')</button>' : '')
+        + '<button class="btn ghost" data-report-story="' + s.id + '">🚩</button></div>';
+    }
+  } else {
+    html += '<div style="margin-top:12px;padding:12px;background:#16221a;border:1px solid #2a5a2a;border-radius:8px">'
+      + '<div style="font-size:12px;color:#8ae08a;margin-bottom:6px;font-weight:600">✓ Правильный ответ</div>'
+      + '<div style="font-size:14px">' + escapeHtml(s.answer) + '</div></div>';
+    if (s.versions.length) {
+      html += '<div style="margin-top:14px"><div style="font-size:13px;color:#8a92a3;margin-bottom:6px">Версии:</div>';
+      s.versions.forEach(v => {
+        const isCorrect = s.correctGuessers.includes(v.author);
+        html += '<div class="version-item ' + (isCorrect ? 'correct' : '') + '"><div class="author">' + escapeHtml(v.author) + (isCorrect ? ' ✓' : '') + '</div>' + escapeHtml(v.text) + '</div>';
+      });
+      html += '</div>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderCreateStoryForm() {
+  const db = DB.load();
+  const canAfford = db.profile.balance >= ECONOMY.costStoryPublish;
+  return `<div class="card">
+    <h3>Написать историю</h3>
+    <p style="font-size:13px;color:#8a92a3;margin-bottom:12px">Публикация: <b style="color:#d4a24a">${ECONOMY.costStoryPublish} пуарос</b>. Топ выпуска: <b style="color:#d4a24a">+${ECONOMY.rewardStoryQuality}</b>.</p>
+    ${!canAfford ? '<p style="color:#e08a8a;font-size:13px">Недостаточно пуаросов.</p>' : ''}
+    <label>Заголовок</label>
+    <input id="st-title" placeholder="например: Пропавшая брошь">
+    <label>Текст истории</label>
+    <textarea id="st-text" class="tall"></textarea>
+    <label>URL картинки (опционально)</label>
+    <input id="st-image" placeholder="https://...">
+    <label>Где ложь и почему</label>
+    <textarea id="st-answer"></textarea>
+    <label>Подсказка</label>
+    <input id="st-hint">
+    <div style="margin-top:18px"><button class="btn primary" id="st-submit" ${!canAfford ? 'disabled' : ''}>Опубликовать (🪙 ${ECONOMY.costStoryPublish})</button></div>
+  </div>`;
+}
+
+function bindStoryEvents() {
+  document.querySelectorAll('[data-sv]').forEach(b => b.onclick = () => { storyView = b.dataset.sv; renderStories(); });
+  document.querySelectorAll('[data-send-version]').forEach(btn => btn.onclick = () => {
+    const id = btn.dataset.sendVersion;
+    const ta = document.getElementById('sv-' + id);
+    const text = ta.value.trim();
+    if (text.length < 10) return toast('Версия короткая');
+    if (hasBadWords(text)) return toast('🚫 Недопустимые слова');
+    const db = DB.load();
+    const s = db.stories.find(x => x.id === id);
+    if (!s || s.closed) return toast('История закрыта');
+    if (s.versions.find(v => v.author === db.profile.name)) return toast('Ты уже отправил');
+    s.versions.push({ author: db.profile.name, text });
+    DB.save(db); toast('✅ Версия принята'); renderStories();
+  });
+  document.querySelectorAll('[data-story-hint]').forEach(btn => btn.onclick = () => {
+    const s = DB.load().stories.find(x => x.id === btn.dataset.storyHint);
+    if (!spendPuaros(ECONOMY.costHint, 'Подсказка к истории')) return toast('Недостаточно пуаросов');
+    toast('💡 ' + s.hint);
+    renderStories();
+  });
+  document.querySelectorAll('[data-report-story]').forEach(btn => btn.onclick = () => toast('🚩 Жалоба отправлена'));
+  const sub = document.getElementById('st-submit');
+  if (sub) sub.onclick = () => {
+    const title = document.getElementById('st-title').value.trim();
+    const text = document.getElementById('st-text').value.trim();
+    const image = document.getElementById('st-image').value.trim();
+    const answer = document.getElementById('st-answer').value.trim();
+    const hint = document.getElementById('st-hint').value.trim();
+    if (text.length < 50) return toast('История короткая');
+    if (answer.length < 10) return toast('Опиши ответ подробнее');
+    if (hasBadWords(text) || hasBadWords(answer)) return toast('🚫 Недопустимые слова');
+    if (!spendPuaros(ECONOMY.costStoryPublish, 'Публикация истории')) return toast('Недостаточно пуаросов');
+    const db = DB.load();
+    db.stories.push({ id: 'st' + Date.now(), title, text, image, answer, hint, author: db.profile.name, createdAt: Date.now(), closed: false, versions: [], correctGuessers: [] });
+    db.profile.storiesWritten++;
+    DB.save(db); toast('✅ Опубликовано (−' + ECONOMY.costStoryPublish + ' 🪙)'); storyView = 'open'; renderStories();
+  };
+}
+
+// ==================== ВКЛАДКА: ЛАВКА ====================
+function renderShop() {
+  const db = DB.load();
+  const el = document.getElementById('tab-shop');
+  el.innerHTML = `
+    <div class="card">
+      <h3>🛒 Лавка</h3>
+      <p style="font-size:13px;color:#8a92a3;margin-bottom:14px">Трать пуаросы на подсказки и публикации. Позже — обмен на реальные деньги.</p>
+      <div class="shop-item">
+        <div class="info"><div class="name">💡 Подсказка</div><div class="desc">Намёк к загадке или истории</div></div>
+        <div class="price">🪙 ${ECONOMY.costHint}</div>
+        <button class="btn small" data-buy="hint">Купить</button>
+      </div>
+      <div class="shop-item">
+        <div class="info"><div class="name">🔄 Вторая попытка</div><div class="desc">Ещё одна попытка ответа</div></div>
+        <div class="price">🪙 ${ECONOMY.costSecondTry}</div>
+        <button class="btn small" data-buy="retry">Купить</button>
+      </div>
+      <div class="shop-item">
+        <div class="info"><div class="name">✍️ Публикация истории</div><div class="desc">Разместить историю в выпуске</div></div>
+        <div class="price">🪙 ${ECONOMY.costStoryPublish}</div>
+        <button class="btn small" data-buy="publish">Купить</button>
+      </div>
+      <div class="shop-item">
+        <div class="info"><div class="name">⭐ Премиум-значок</div><div class="desc">Особый значок в профиле</div></div>
+        <div class="price">🪙 20</div>
+        <button class="btn small" disabled>Скоро</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Как заработать</h3>
+      <div class="transaction"><span>Разгадал загадку</span><span class="amount plus">+${ECONOMY.rewardSolved}</span></div>
+      <div class="transaction"><span>Первый разгадавший (бонус)</span><span class="amount plus">+${ECONOMY.rewardSolvedFirst}</span></div>
+      <div class="transaction"><span>Хорошая история</span><span class="amount plus">+${ECONOMY.rewardStoryQuality}</span></div>
+    </div>
+  `;
+  document.querySelectorAll('[data-buy]').forEach(btn => btn.onclick = () => {
+    const what = btn.dataset.buy;
+    if (what === 'hint') toast('Подсказка покупается в загадке/истории');
+    if (what === 'retry') toast('Скоро');
+    if (what === 'publish') { storyView = 'create'; switchTab('stories'); }
+  });
+  updateHeader();
+}
+
+// ==================== ВКЛАДКА: ПРОФИЛЬ ====================
+function renderProfile() {
+  const db = DB.load();
+  const p = db.profile;
+  const myRiddles = db.riddles.filter(r => r.author === p.name);
+  const myStories = db.stories.filter(s => s.author === p.name);
+  const rank = p.solved >= 10 ? 'Шерлок' : p.solved >= 5 ? 'Детектив' : p.solved >= 1 ? 'Новичок' : 'Наблюдатель';
+
+  document.getElementById('tab-profile').innerHTML = `
+    <div class="card">
+      <h3>${escapeHtml(p.name)} <span class="status-badge gold">${rank}</span></h3>
+      <div style="margin-top:14px">
+        <div class="transaction"><span>💰 Баланс</span><span class="amount plus">${p.balance} пуаросов</span></div>
+        <div class="transaction"><span>Разгадано загадок</span><span>${p.solved}</span></div>
+        <div class="transaction"><span>Загадано загадок</span><span>${p.authored}</span></div>
+        <div class="transaction"><span>Написано историй</span><span>${p.storiesWritten}</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>История транзакций</h3>
+      ${p.transactions.length === 0 ? '<div class="empty">Пока пусто</div>' :
+        p.transactions.slice(0, 15).map(t => `
+          <div class="transaction">
+            <span>${escapeHtml(t.reason)}</span>
+            <span class="amount ${t.amount > 0 ? 'plus' : 'minus'}">${t.amount > 0 ? '+' : ''}${t.amount} 🪙</span>
+          </div>`).join('')}
+    </div>
+    <div class="card">
+      <h3>Сменить имя</h3>
+      <div class="input-row" style="margin-top:10px">
+        <input id="p-name" value="${escapeHtml(p.name)}">
+        <button class="btn primary" id="p-save">Сохранить</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Мои загадки (${myRiddles.length})</h3>
+      ${myRiddles.length === 0 ? '<div class="empty">Пока ничего</div>' :
+        myRiddles.map(r => `<div class="transaction"><span>${escapeHtml(r.text.slice(0, 50))}…</span><span>${r.solvers.length} ✓</span></div>`).join('')}
+    </div>
+    <div class="card">
+      <h3>Мои истории (${myStories.length})</h3>
+      ${myStories.length === 0 ? '<div class="empty">Пока ничего</div>' :
+        myStories.map(s => `<div class="transaction"><span>${escapeHtml((s.title || s.text).slice(0, 50))}…</span><span>${s.versions.length} 💬</span></div>`).join('')}
+    </div>
+    <div class="card">
+      <h3>Редакторское (для теста)</h3>
+      <button class="btn primary" id="p-close-issue">📖 Закрыть выпуск №${db.issueNumber}</button>
+      <button class="btn danger" id="p-reset" style="margin-left:8px">Сбросить</button>
+    </div>
+  `;
+  document.getElementById('p-save').onclick = () => {
+    const name = document.getElementById('p-name').value.trim();
+    if (!name) return toast('Пусто');
+    const db = DB.load(); db.profile.name = name; DB.save(db); toast('Сохранено'); renderProfile(); updateHeader();
+  };
+  document.getElementById('p-close-issue').onclick = () => {
+    const db = DB.load();
+    const open = db.stories.filter(s => !s.closed);
+    if (open.length === 0) return toast('Нет открытых историй');
+    open.forEach(s => {
+      s.closed = true;
+      const keyWords = s.answer.toLowerCase().split(/\s+/).filter(w => w.length > 5);
+      s.versions.forEach(v => {
+        const low = v.text.toLowerCase();
+        if (keyWords.some(w => low.includes(w))) s.correctGuessers.push(v.author);
+      });
+    });
+    db.issueNumber++;
+    DB.save(db); toast('📖 Выпуск закрыт'); renderProfile(); updateHeader();
+  };
+  document.getElementById('p-reset').onclick = () => {
+    if (confirm('Сбросить?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      seedIfEmpty();
+      toast('Сброшено'); switchTab('riddles');
+    }
+  };
+  updateHeader();
+}
+
+// ==================== ВКЛАДКИ ====================
+function switchTab(name) {
+  document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  ['riddles', 'stories', 'shop', 'profile'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+  });
+  if (name === 'riddles') renderRiddles();
+  if (name === 'stories') renderStories();
+  if (name === 'shop') renderShop();
+  if (name === 'profile') renderProfile();
+  // закрыть мобильное меню
+  document.getElementById('sidebar').classList.remove('open');
+}
+document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+document.getElementById('user-chip').onclick = () => switchTab('profile');
+document.getElementById('mobile-menu').onclick = () => {
+  document.getElementById('sidebar').classList.toggle('open');
+};
+
+// ==================== СТАРТ ====================
+seedIfEmpty();
+updateHeader();
+renderRiddles();
+setInterval(() => { if (!document.getElementById('tab-riddles').classList.contains('hidden')) renderRiddles(); }, 30000);
+</script>
+</body>
+</html>
