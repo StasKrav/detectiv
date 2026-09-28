@@ -34,6 +34,34 @@
     --orange:     #dfaf8f;   /* предупреждение */
   }
 
+  :root[data-theme="light"] {
+    /* Фоны — от самого светлого к чуть темнее */
+    --bg-deep:    #e8e6e1;   /* фон за пределами layout */
+    --bg-main:    #faf8f3;   /* основной фон layout */
+    --bg-panel:   #f0ede6;   /* боковые колонки, шапка */
+    --bg-card:    #ffffff;   /* карточки, виджеты */
+    --bg-input:   #ffffff;   /* поля ввода */
+    --bg-hover:   #e8e4db;   /* hover, активные элементы */
+    --bg-subtle:  #ebe7dd;   /* теги, бейджи */
+
+    /* Границы — важны для светлой темы, делаем заметными */
+    --border:        #d4cfc4;
+    --border-strong: #b8b2a4;
+
+    /* Текст */
+    --text:      #2b2b2b;
+    --text-dim:  #5a5a55;
+    --text-mute: #8a8a80;
+
+    /* Акценты — приглушённые под светлый фон */
+    --gold:       #a67c2e;   /* золото темнее — иначе не видно на светлом */
+    --gold-hover: #8f6a26;
+    --green:      #4a7a4a;
+    --red:        #a04040;
+    --blue:       #3a6a8a;
+    --orange:     #a06030;
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -91,6 +119,19 @@
     color: var(--text);
   }
   .user-chip:hover { border-color: var(--gold); }
+
+  .theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
 
   aside.left {
     grid-area: left;
@@ -228,21 +269,21 @@
 
   .input-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
   input, textarea, select {
-    background: transparent;
-    border: 1px solid var(--border);
+    background: var(--bg-input);
+    border: 1px solid var(--border-strong);
     color: var(--text);
     padding: 10px 12px;
     border-radius: 8px;
     font-size: 14px;
     font-family: inherit;
     width: 100%;
-    transition: border-color 0.15s, background 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
   input::placeholder, textarea::placeholder { color: var(--text-mute); }
   input:focus, textarea:focus {
     outline: none;
-    border-color: var(--text-dim);
-    background: var(--bg-input);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(166, 124, 46, 0.15);
   }
   textarea { resize: vertical; min-height: 80px; }
   textarea.tall { min-height: 140px; }
@@ -370,6 +411,7 @@
     <input class="search" placeholder="Поиск загадок и историй...">
     <div class="topbar-right">
       <div class="balance-badge"><span>PUS</span> <span id="balance-value">0</span></div>
+      <button class="theme-toggle" id="theme-toggle" title="Переключить тему">☀</button>
       <div class="user-chip" id="user-chip">Детектив</div>
     </div>
   </header>
@@ -658,7 +700,6 @@ function riddleCard(r, closed) {
       + '<button class="btn primary" data-guess="' + r.id + '">Ответить</button></div>'
       + '<div class="input-row">'
       + '<button class="btn ghost" data-hint="' + r.id + '">'
-
       +   ' Подсказка (' + ECONOMY.costHint + ' PUS)'
       + '</button>'
       + '<button class="btn ghost" data-like="' + r.id + '">Like ' + r.likes + '</button>'
@@ -786,8 +827,7 @@ function storyCard(s, closed) {
     if (myVersion) {
       html += '<div class="version-item"><div class="author">Твоя версия:</div>' + escapeHtml(myVersion.text) + '</div>';
     } else {
-      html += 
-         '<textarea id="sv-' + s.id + '" placeholder="Напиши свою версию правды..."></textarea>'
+      html += '<textarea id="sv-' + s.id + '" placeholder="Напиши свою версию правды..."></textarea>'
         + '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">'
         + '<button class="btn primary" data-send-version="' + s.id + '">Отправить версию</button>'
         + (s.hint ? '<button class="btn ghost" data-story-hint="' + s.id + '">Подсказка (' + ECONOMY.costHint + ' PUS)</button>' : '')
@@ -1015,10 +1055,33 @@ document.getElementById('mobile-menu').onclick = () => {
   document.getElementById('sidebar').classList.toggle('open');
 };
 
+// ==================== ТЕМА ====================
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.dataset.theme = 'light';
+    document.getElementById('theme-toggle').textContent = '☾';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    document.getElementById('theme-toggle').textContent = '☀';
+  }
+  localStorage.setItem('sherlock_theme', theme);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('sherlock_theme') || 'dark';
+  applyTheme(saved);
+  document.getElementById('theme-toggle').onclick = () => {
+    const current = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+    applyTheme(current === 'light' ? 'dark' : 'light');
+  };
+}
+
 // ==================== СТАРТ ====================
+initTheme();
 seedIfEmpty();
 updateHeader();
 renderRiddles();
+
 setInterval(() => {
   if (document.getElementById('tab-riddles').classList.contains('hidden')) return;
   if (riddleView === 'create') return;   // ← не трогаем форму
