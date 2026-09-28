@@ -6,3 +6,4 @@ data/*.db-journal
 .DS_Store
 *.log
 EOF
+server/cookies.txt
