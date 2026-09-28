@@ -111,4 +111,23 @@ router.get('/me', requireAuth, (req, res) => {
   res.json({ ok: true, user });
 });
 
+// ==================== СМЕНИТЬ ИМЯ ====================
+router.patch('/me', requireAuth, (req, res) => {
+  const { name } = req.body;
+
+  if (!name || name.length < 2 || name.length > 30) {
+    return res.status(400).json({ error: 'Имя от 2 до 30 символов' });
+  }
+
+  db.prepare('UPDATE users SET name = ? WHERE id = ?').run(name.trim(), req.userId);
+
+  const user = db.prepare(`
+    SELECT id, email, name, balance, solved, authored, stories_written, created_at
+    FROM users WHERE id = ?
+  `).get(req.userId);
+
+  res.json({ ok: true, user });
+});
+
+
 module.exports = router;

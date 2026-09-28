@@ -47,6 +47,9 @@ export const api = {
   me: () =>
     request('GET', '/auth/me'),
 
+  updateMe: (name) =>
+    request('PATCH', '/auth/me', { name }),
+
   // ==================== ЗАГАДКИ ====================
   getRiddles: () =>
     request('GET', '/riddles'),
