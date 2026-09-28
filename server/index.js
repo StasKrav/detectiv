@@ -4,6 +4,8 @@ const path = require('path');
 const db = require('./db');
 const authRoutes = require('./routes/auth');
 const riddlesRoutes = require('./routes/riddles');
+const storiesRoutes = require('./routes/stories');
+const issuesRoutes = require('./routes/issues');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +21,8 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/riddles', riddlesRoutes);
+app.use('/api/stories', storiesRoutes);
+app.use('/api/issues', issuesRoutes);
 
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
