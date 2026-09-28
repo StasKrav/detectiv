@@ -7,59 +7,61 @@
 <style>
   /* ===== ZENBURN-НУАР ПАЛИТРА ===== */
   :root {
-    /* Фоны — от самого тёмного к светлому */
-    --bg-deep:    #141414;   /* фон за пределами layout */
-    --bg-main:    #2b2b2b;   /* основной фон layout */
-    --bg-panel:   #232323;   /* боковые колонки, шапка */
-    --bg-card:    #2f2f2f;   /* карточки, виджеты */
-    --bg-input:   #1f1f1f;   /* поля ввода */
-    --bg-hover:   #3a3a3a;   /* hover, активные элементы */
-    --bg-subtle:  #383838;   /* теги, бейджи */
+    --bg-deep:    #141414;
+    --bg-main:    #2b2b2b;
+    --bg-panel:   #232323;
+    --bg-card:    #2f2f2f;
+    --bg-input:   #1f1f1f;
+    --bg-hover:   #3a3a3a;
+    --bg-subtle:  #383838;
 
-    /* Границы */
     --border:        #3d3d3d;
     --border-strong: #4f4f4f;
 
-    /* Текст */
-    --text:      #dcdccc;    /* основной */
-    --text-dim:  #989890;    /* приглушённый */
-    --text-mute: #6f6f68;    /* самый тихий */
+    --text:      #dcdccc;
+    --text-dim:  #989890;
+    --text-mute: #6f6f68;
 
-    /* Акценты */
-    --gold:       #f0dfaf;   /* главный акцент */
-    --gold-hover: #f7ebc4;   /* акцент hover */
-    --green:      #8faf7f;   /* успех, разгадано */
-    --red:        #cc9393;   /* ошибка, закрыто */
-    --blue:       #8cd0d3;   /* информация, выпуск */
-    --orange:     #dfaf8f;   /* предупреждение */
+    --gold:       #f0dfaf;
+    --gold-hover: #f7ebc4;
+    --green:      #8faf7f;
+    --red:        #cc9393;
+    --blue:       #8cd0d3;
+    --orange:     #dfaf8f;
+
+    --gold-bg:   rgba(240, 223, 175, 0.12);
+    --green-bg:  rgba(143, 175, 127, 0.15);
+    --red-bg:    rgba(204, 147, 147, 0.12);
+    --blue-bg:   rgba(140, 208, 211, 0.10);
   }
 
   :root[data-theme="light"] {
-    /* Фоны — от самого светлого к чуть темнее */
-    --bg-deep:    #e8e6e1;   /* фон за пределами layout */
-    --bg-main:    #faf8f3;   /* основной фон layout */
-    --bg-panel:   #f0ede6;   /* боковые колонки, шапка */
-    --bg-card:    #ffffff;   /* карточки, виджеты */
-    --bg-input:   #ffffff;   /* поля ввода */
-    --bg-hover:   #e8e4db;   /* hover, активные элементы */
-    --bg-subtle:  #ebe7dd;   /* теги, бейджи */
+    --bg-deep:    #e8e6e1;
+    --bg-main:    #faf8f3;
+    --bg-panel:   #f0ede6;
+    --bg-card:    #ffffff;
+    --bg-input:   #ffffff;
+    --bg-hover:   #e8e4db;
+    --bg-subtle:  #ebe7dd;
 
-    /* Границы — важны для светлой темы, делаем заметными */
     --border:        #d4cfc4;
     --border-strong: #b8b2a4;
 
-    /* Текст */
     --text:      #2b2b2b;
     --text-dim:  #5a5a55;
     --text-mute: #8a8a80;
 
-    /* Акценты — приглушённые под светлый фон */
-    --gold:       #a67c2e;   /* золото темнее — иначе не видно на светлом */
+    --gold:       #a67c2e;
     --gold-hover: #8f6a26;
     --green:      #4a7a4a;
     --red:        #a04040;
     --blue:       #3a6a8a;
     --orange:     #a06030;
+
+    --gold-bg:   rgba(166, 124, 46, 0.12);
+    --green-bg:  rgba(74, 122, 74, 0.12);
+    --red-bg:    rgba(160, 64, 64, 0.10);
+    --blue-bg:   rgba(58, 106, 138, 0.10);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -107,7 +109,7 @@
   .search:focus { outline: none; border-color: var(--gold); }
   .topbar-right { display: flex; align-items: center; gap: 12px; }
   .balance-badge {
-    background: linear-gradient(135deg, #3a3020, #2a2418);
+    background: var(--gold-bg);
     border: 1px solid var(--gold); border-radius: 20px;
     padding: 6px 14px; font-size: 14px; font-weight: 600; color: var(--gold);
     display: flex; align-items: center; gap: 6px; white-space: nowrap;
@@ -182,7 +184,7 @@
     font-size: 11px; padding: 2px 8px; border-radius: 10px;
     color: var(--text-dim);
   }
-  .nav-item.active .badge { background: #3a3020; color: var(--gold); }
+  .nav-item.active .badge { background: var(--gold-bg); color: var(--gold); }
 
   /* ===== ПРАВАЯ КОЛОНКА ===== */
   .widget {
@@ -213,13 +215,13 @@
     width: 20px; color: var(--text-mute); font-weight: 600; text-align: center;
   }
   .top-player .pos.gold { color: var(--gold); }
-  .top-player .pos.silver { color: #b8b8b0; }
+  .top-player .pos.silver { color: var(--text-dim); }
   .top-player .pos.bronze { color: var(--orange); }
   .top-player .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .top-player .val { color: var(--gold); font-weight: 600; }
   .top-player.me { background: var(--bg-hover); border-radius: 6px; padding: 7px 8px; margin: 0 -8px; }
 
-  .issue-widget { border-color: #3a4a4a; }
+  .issue-widget { border-color: var(--border); }
   .issue-widget h4 { color: var(--blue); }
   .issue-widget .big { font-size: 22px; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
   .issue-widget p { font-size: 12px; color: var(--text-dim); }
@@ -237,6 +239,7 @@
     padding: 20px; margin-bottom: 16px;
   }
   .card h3 { font-size: 17px; margin-bottom: 8px; color: var(--text); }
+
   .meta {
     display: flex;
     gap: 10px;
@@ -263,7 +266,7 @@
   .meta .tag.closed { background: transparent; color: var(--red); opacity: 0.8; }
   .meta .tag.reward { background: transparent; color: var(--text-mute); }
 
-  .riddle-text { font-size: 15px; color: var(--text); margin-bottom: 14px; white-space: pre-wrap; }
+  .riddle-text { font-size: 17px; font-weight: 500; line-height: 1.6; color: var(--text); margin-bottom: 14px; white-space: pre-wrap; }
   .story-text { font-size: 15px; color: var(--text); margin-bottom: 14px; white-space: pre-wrap; line-height: 1.7; }
   .story-img { max-width: 100%; border-radius: 10px; margin-bottom: 14px; display: block; }
 
@@ -283,7 +286,7 @@
   input:focus, textarea:focus {
     outline: none;
     border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(166, 124, 46, 0.15);
+    box-shadow: 0 0 0 3px var(--gold-bg);
   }
   textarea { resize: vertical; min-height: 80px; }
   textarea.tall { min-height: 140px; }
@@ -302,31 +305,42 @@
     font-weight: 600;
   }
   .btn.primary:hover {
-    background: rgba(240, 223, 175, 0.1);
+    background: var(--gold-bg);
     color: var(--gold-hover);
     border-color: var(--gold-hover);
   }
   .btn.ghost { background: transparent; font-size: 11px; }
-  .btn.danger { border-color: #5a3a3a; color: var(--red); }
+  .btn.danger { border-color: var(--red); color: var(--red); }
   .btn.small { padding: 4px 10px; font-size: 12px; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .status-badge {
-    display: inline-block; background: #2a3528; color: var(--green);
+    display: inline-block; background: var(--green-bg); color: var(--green);
     padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
   }
-  .status-badge.gold { background: #3a3020; color: var(--gold); }
+  .status-badge.gold { background: var(--gold-bg); color: var(--gold); }
 
   .empty { text-align: center; color: var(--text-mute); padding: 40px 20px; font-size: 14px; }
-
-  .answers { margin-top: 10px; font-size: 13px; color: var(--text-dim); }
 
   .version-item {
     background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px;
     padding: 10px 14px; margin-top: 8px; font-size: 13px; color: var(--text);
   }
-  .version-item.correct { border-color: #3a5a3a; background: #2a3528; }
+  .version-item.correct { border-color: var(--green); background: var(--green-bg); }
   .version-item .author { color: var(--text-dim); font-size: 12px; margin-bottom: 4px; }
+
+  .answer-reveal {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--green-bg);
+    border: 1px solid var(--green);
+    border-radius: 8px;
+  }
+  .answer-reveal .label {
+    font-size: 12px; color: var(--green);
+    margin-bottom: 6px; font-weight: 600;
+  }
+  .answer-reveal .text { font-size: 14px; color: var(--text); }
 
   .hidden { display: none; }
 
@@ -361,11 +375,17 @@
 
   .icon {
     display: inline-block;
-    vertical-align: -0.15em;   /* выравнивание по базовой линии текста */
-    width: 1em;                /* размер = размер шрифта */
+    vertical-align: -0.15em;
+    width: 1em;
     height: 1em;
-    flex-shrink: 0;            /* не сжимается во flex-контейнерах */
+    flex-shrink: 0;
   }
+
+  .online-line { font-size: 13px; color: var(--text-dim); }
+  .online-line .dot { color: var(--green); }
+
+  .muted-note { font-size: 13px; color: var(--text-dim); }
+  .warn-note { font-size: 13px; color: var(--red); }
 
   /* ===== АДАПТИВ ===== */
   .mobile-menu-btn {
@@ -398,8 +418,6 @@
     .search { display: none; }
   }
 </style>
-
-
 </head>
 <body>
 <div class="layout">
@@ -407,7 +425,7 @@
   <!-- ШАПКА -->
   <header class="topbar">
     <button class="mobile-menu-btn" id="mobile-menu">☰</button>
-    <div class="logo">🕵️ <span>Шерлок</span></div>
+    <div class="logo"><span>Шерлок</span></div>
     <input class="search" placeholder="Поиск загадок и историй...">
     <div class="topbar-right">
       <div class="balance-badge"><span>PUS</span> <span id="balance-value">0</span></div>
@@ -481,9 +499,7 @@
 
     <div class="widget">
       <h4>Сейчас онлайн</h4>
-      <p style="font-size:13px;color:#8a92a3">
-        <span style="color:#8ae08a">●</span> 1 детектив (ты)
-      </p>
+      <p class="online-line"><span class="dot">●</span> 1 детектив (ты)</p>
     </div>
   </aside>
 
@@ -528,18 +544,6 @@ const ECONOMY = {
   costStoryPublish: 1
 };
 
-// ================== ИКОНКИ ==========================
-const ICON_LAMP = `<svg width="16" height="16" viewBox="0 0 504 536" xmlns="http://www.w3.org/2000/svg">
-<path d="M188,380 L316,348" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
-<path d="M188,412 L316,380" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
-<path d="M316,316 C444,220 380,60 252,60" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
-<path d="M252,60 C92,60 60,252 188,316" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
-<path d="M188,316 L188,348" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
-<path d="M220,444 C252,476 252,476 284,444" stroke="currentColor" stroke-width="24" fill="none" stroke-linecap="round"/>
-</svg>
-
-
-`;
 // ==================== СТОП-СЛОВА ====================
 const BAD_WORDS = ['хуй', 'пизд', 'бляд', 'ебат', 'ебал', 'сука', 'мразь', 'гандон', 'долбоеб', 'залуп'];
 function hasBadWords(t) { const l = t.toLowerCase(); return BAD_WORDS.some(w => l.includes(w)); }
@@ -622,7 +626,6 @@ function updateHeader() {
   document.getElementById('w-solved').textContent = p.solved;
   document.getElementById('w-balance').textContent = p.balance;
 
-  // прогресс до следующего ранга
   let progress = 0;
   if (p.solved < 1) progress = 0;
   else if (p.solved < 5) progress = (p.solved / 5) * 100;
@@ -630,15 +633,12 @@ function updateHeader() {
   else progress = 100;
   document.getElementById('w-progress').style.width = progress + '%';
 
-  // счётчики в левой колонке
   document.getElementById('badge-riddles').textContent = db.riddles.filter(r => !isClosedRiddle(r)).length;
   document.getElementById('badge-stories').textContent = db.stories.filter(s => !s.closed).length;
 
-  // выпуск
   document.getElementById('issue-num').textContent = '№' + db.issueNumber;
   document.getElementById('issue-info').textContent = 'Открытых историй: ' + db.stories.filter(s => !s.closed).length;
 
-  // топ игроков
   const allPlayers = [...db.fakeTopPlayers, { name: p.name, puaros: p.balance, me: true }]
     .sort((a, b) => b.puaros - a.puaros);
   document.getElementById('top-players').innerHTML = allPlayers.slice(0, 5).map((pl, i) => {
@@ -689,7 +689,6 @@ function riddleCard(r, closed) {
   if (!closed) tags.push('<span class="tag hot">⏱ ' + timeLeft(r) + '</span>');
   else tags.push('<span class="tag closed">закрыта</span>');
   tags.push('<span class="tag">отгадавших ' + r.solvers.length + '/' + r.maxSolvers + '</span>');
-  tags.push('<span class="tag reward">PUS +' + ECONOMY.rewardSolved + '</span>');
 
   let body = '<div class="riddle-text">' + escapeHtml(r.text) + '</div>';
   body += '<div class="meta">' + tags.join('') + '</div>';
@@ -699,16 +698,14 @@ function riddleCard(r, closed) {
       + '<input type="text" placeholder="Твой ответ..." data-answer-input="' + r.id + '">'
       + '<button class="btn primary" data-guess="' + r.id + '">Ответить</button></div>'
       + '<div class="input-row">'
-      + '<button class="btn ghost" data-hint="' + r.id + '">'
-      +   ' Подсказка (' + ECONOMY.costHint + ' PUS)'
-      + '</button>'
+      + '<button class="btn ghost" data-hint="' + r.id + '">Подсказка (' + ECONOMY.costHint + ' PUS)</button>'
       + '<button class="btn ghost" data-like="' + r.id + '">Like ' + r.likes + '</button>'
       + '<button class="btn ghost" data-report="' + r.id + '">жалоба</button></div>';
   } else if (solvedByMe) {
-    body += '<div style="margin-top:12px"><span class="status-badge">✓ Ты разгадал</span> '
+    body += '<div style="margin-top:12px"><span class="status-badge">Ты разгадал</span> '
       + '<button class="btn ghost small" data-like="' + r.id + '">Like ' + r.likes + '</button></div>';
   } else {
-    body += '<div style="margin-top:12px;font-size:13px;color:#8a92a3">Ответ: <b style="color:#d4a24a">' + escapeHtml(r.answer) + '</b></div>';
+    body += '<div style="margin-top:12px;font-size:13px;color:var(--text-dim)">Ответ: <b style="color:var(--gold)">' + escapeHtml(r.answer) + '</b></div>';
   }
   return '<div class="card">' + body + '</div>';
 }
@@ -716,7 +713,7 @@ function riddleCard(r, closed) {
 function renderCreateRiddleForm() {
   return `<div class="card">
     <h3>Загадать загадку</h3>
-    <p style="font-size:13px;color:#8a92a3;margin-bottom:12px">Публикация бесплатная. За разгадки твоей загадки капают пуаросы.</p>
+    <p class="muted-note" style="margin-bottom:12px">Публикация бесплатная. За разгадки твоей загадки капают пуаросы.</p>
     <label>Текст загадки</label>
     <textarea id="c-text" placeholder="Опиши загадку..."></textarea>
     <label>Правильный ответ</label>
@@ -750,15 +747,15 @@ function bindRiddleEvents() {
         DB.save(db);
         const reward = wasFirst ? ECONOMY.rewardSolved + ECONOMY.rewardSolvedFirst : ECONOMY.rewardSolved;
         addPuaros(reward, wasFirst ? 'Первым разгадал загадку' : 'Разгадал загадку');
-        toast('🎉 Верно! +' + reward + ' пуарос' + (wasFirst ? ' (первый!)' : ''), true);
-      } else { DB.save(db); toast('🎉 Верно!'); }
-    } else { DB.save(db); toast('❌ Неверно'); }
+        toast('Верно! +' + reward + ' PUS' + (wasFirst ? ' (первый!)' : ''), true);
+      } else { DB.save(db); toast('Верно!'); }
+    } else { DB.save(db); toast('Неверно'); }
     renderRiddles();
   });
   document.querySelectorAll('[data-hint]').forEach(btn => btn.onclick = () => {
     const r = DB.load().riddles.find(x => x.id === btn.dataset.hint);
     if (!spendPuaros(ECONOMY.costHint, 'Подсказка к загадке')) return toast('Недостаточно пуаросов');
-    toast('💡 ' + r.hint);
+    toast('Подсказка: ' + r.hint);
     renderRiddles();
   });
   document.querySelectorAll('[data-like]').forEach(btn => btn.onclick = () => {
@@ -766,7 +763,7 @@ function bindRiddleEvents() {
     const r = db.riddles.find(x => x.id === btn.dataset.like);
     r.likes++; DB.save(db); renderRiddles();
   });
-  document.querySelectorAll('[data-report]').forEach(btn => btn.onclick = () => toast('🚩 Жалоба отправлена'));
+  document.querySelectorAll('[data-report]').forEach(btn => btn.onclick = () => toast('Жалоба отправлена'));
   const sub = document.getElementById('c-submit');
   if (sub) sub.onclick = () => {
     const text = document.getElementById('c-text').value.trim();
@@ -776,7 +773,7 @@ function bindRiddleEvents() {
     const maxSolvers = parseInt(document.getElementById('c-solvers').value) || 5;
     if (text.length < 15) return toast('Текст короткий');
     if (answer.length < 2) return toast('Ответ короткий');
-    if (hasBadWords(text) || hasBadWords(answer)) return toast('🚫 Недопустимые слова');
+    if (hasBadWords(text) || hasBadWords(answer)) return toast('Недопустимые слова');
     if (normalize(text).includes(normalize(answer))) return toast('Ответ не должен быть в тексте');
     const db = DB.load();
     db.riddles.push({ id: 'r' + Date.now(), text, answer, hint, timeLimitMin, maxSolvers, author: db.profile.name, createdAt: Date.now(), solvers: [], attempts: 0, likes: 0, closed: false });
@@ -821,7 +818,7 @@ function storyCard(s, closed) {
   html += '<div class="story-text">' + escapeHtml(s.text) + '</div>';
   html += '<div class="meta"><span class="tag">от ' + escapeHtml(s.author) + '</span>'
     + '<span class="tag ' + (closed ? 'closed' : 'hot') + '">' + (closed ? 'выпуск закрыт' : 'открыта') + '</span>'
-    + '<span class="tag">💬 ' + s.versions.length + ' версий</span></div>';
+    + '<span class="tag">' + s.versions.length + ' версий</span></div>';
 
   if (!closed) {
     if (myVersion) {
@@ -834,14 +831,15 @@ function storyCard(s, closed) {
         + '<button class="btn ghost" data-report-story="' + s.id + '">жалоба</button></div>';
     }
   } else {
-    html += '<div style="margin-top:12px;padding:12px;background:#16221a;border:1px solid #2a5a2a;border-radius:8px">'
-      + '<div style="font-size:12px;color:#8ae08a;margin-bottom:6px;font-weight:600">✓ Правильный ответ</div>'
-      + '<div style="font-size:14px">' + escapeHtml(s.answer) + '</div></div>';
+    html += '<div class="answer-reveal">'
+      + '<div class="label">Правильный ответ</div>'
+      + '<div class="text">' + escapeHtml(s.answer) + '</div>'
+      + '</div>';
     if (s.versions.length) {
-      html += '<div style="margin-top:14px"><div style="font-size:13px;color:#8a92a3;margin-bottom:6px">Версии:</div>';
+      html += '<div style="margin-top:14px"><div class="muted-note" style="margin-bottom:6px">Версии:</div>';
       s.versions.forEach(v => {
         const isCorrect = s.correctGuessers.includes(v.author);
-        html += '<div class="version-item ' + (isCorrect ? 'correct' : '') + '"><div class="author">' + escapeHtml(v.author) + (isCorrect ? ' ✓' : '') + '</div>' + escapeHtml(v.text) + '</div>';
+        html += '<div class="version-item ' + (isCorrect ? 'correct' : '') + '"><div class="author">' + escapeHtml(v.author) + (isCorrect ? ' — верно' : '') + '</div>' + escapeHtml(v.text) + '</div>';
       });
       html += '</div>';
     }
@@ -855,8 +853,8 @@ function renderCreateStoryForm() {
   const canAfford = db.profile.balance >= ECONOMY.costStoryPublish;
   return `<div class="card">
     <h3>Написать историю</h3>
-    <p style="font-size:13px;color:#8a92a3;margin-bottom:12px">Публикация: <b style="color:#d4a24a">${ECONOMY.costStoryPublish} пуарос</b>. Топ выпуска: <b style="color:#d4a24a">+${ECONOMY.rewardStoryQuality}</b>.</p>
-    ${!canAfford ? '<p style="color:#e08a8a;font-size:13px">Недостаточно пуаросов.</p>' : ''}
+    <p class="muted-note" style="margin-bottom:12px">Публикация: <b style="color:var(--gold)">${ECONOMY.costStoryPublish} PUS</b>. Топ выпуска: <b style="color:var(--gold)">+${ECONOMY.rewardStoryQuality} PUS</b>.</p>
+    ${!canAfford ? '<p class="warn-note">Недостаточно пуаросов.</p>' : ''}
     <label>Заголовок</label>
     <input id="st-title" placeholder="например: Пропавшая брошь">
     <label>Текст истории</label>
@@ -878,21 +876,21 @@ function bindStoryEvents() {
     const ta = document.getElementById('sv-' + id);
     const text = ta.value.trim();
     if (text.length < 10) return toast('Версия короткая');
-    if (hasBadWords(text)) return toast('🚫 Недопустимые слова');
+    if (hasBadWords(text)) return toast('Недопустимые слова');
     const db = DB.load();
     const s = db.stories.find(x => x.id === id);
     if (!s || s.closed) return toast('История закрыта');
     if (s.versions.find(v => v.author === db.profile.name)) return toast('Ты уже отправил');
     s.versions.push({ author: db.profile.name, text });
-    DB.save(db); toast('✅ Версия принята'); renderStories();
+    DB.save(db); toast('Версия принята'); renderStories();
   });
   document.querySelectorAll('[data-story-hint]').forEach(btn => btn.onclick = () => {
     const s = DB.load().stories.find(x => x.id === btn.dataset.storyHint);
     if (!spendPuaros(ECONOMY.costHint, 'Подсказка к истории')) return toast('Недостаточно пуаросов');
-    toast('💡 ' + s.hint);
+    toast('Подсказка: ' + s.hint);
     renderStories();
   });
-  document.querySelectorAll('[data-report-story]').forEach(btn => btn.onclick = () => toast('🚩 Жалоба отправлена'));
+  document.querySelectorAll('[data-report-story]').forEach(btn => btn.onclick = () => toast('Жалоба отправлена'));
   const sub = document.getElementById('st-submit');
   if (sub) sub.onclick = () => {
     const title = document.getElementById('st-title').value.trim();
@@ -902,12 +900,12 @@ function bindStoryEvents() {
     const hint = document.getElementById('st-hint').value.trim();
     if (text.length < 50) return toast('История короткая');
     if (answer.length < 10) return toast('Опиши ответ подробнее');
-    if (hasBadWords(text) || hasBadWords(answer)) return toast('🚫 Недопустимые слова');
+    if (hasBadWords(text) || hasBadWords(answer)) return toast('Недопустимые слова');
     if (!spendPuaros(ECONOMY.costStoryPublish, 'Публикация истории')) return toast('Недостаточно пуаросов');
     const db = DB.load();
     db.stories.push({ id: 'st' + Date.now(), title, text, image, answer, hint, author: db.profile.name, createdAt: Date.now(), closed: false, versions: [], correctGuessers: [] });
     db.profile.storiesWritten++;
-    DB.save(db); toast('✅ Опубликовано (−' + ECONOMY.costStoryPublish + ' 🪙)'); storyView = 'open'; renderStories();
+    DB.save(db); toast('Опубликовано (−' + ECONOMY.costStoryPublish + ' PUS)'); storyView = 'open'; renderStories();
   };
 }
 
@@ -917,26 +915,26 @@ function renderShop() {
   const el = document.getElementById('tab-shop');
   el.innerHTML = `
     <div class="card">
-      <h3>🛒 Лавка</h3>
-      <p style="font-size:13px;color:#8a92a3;margin-bottom:14px">Трать пуаросы на подсказки и публикации. Позже — обмен на реальные деньги.</p>
+      <h3>Лавка</h3>
+      <p class="muted-note" style="margin-bottom:14px">Трать пуаросы на подсказки и публикации. Позже — обмен на реальные деньги.</p>
       <div class="shop-item">
-        <div class="info"><div class="name">💡 Подсказка</div><div class="desc">Намёк к загадке или истории</div></div>
-        <div class="price">🪙 ${ECONOMY.costHint}</div>
+        <div class="info"><div class="name">Подсказка</div><div class="desc">Намёк к загадке или истории</div></div>
+        <div class="price">${ECONOMY.costHint} PUS</div>
         <button class="btn small" data-buy="hint">Купить</button>
       </div>
       <div class="shop-item">
-        <div class="info"><div class="name">🔄 Вторая попытка</div><div class="desc">Ещё одна попытка ответа</div></div>
-        <div class="price">🪙 ${ECONOMY.costSecondTry}</div>
+        <div class="info"><div class="name">Вторая попытка</div><div class="desc">Ещё одна попытка ответа</div></div>
+        <div class="price">${ECONOMY.costSecondTry} PUS</div>
         <button class="btn small" data-buy="retry">Купить</button>
       </div>
       <div class="shop-item">
-        <div class="info"><div class="name">✍️ Публикация истории</div><div class="desc">Разместить историю в выпуске</div></div>
-        <div class="price">🪙 ${ECONOMY.costStoryPublish}</div>
+        <div class="info"><div class="name">Публикация истории</div><div class="desc">Разместить историю в выпуске</div></div>
+        <div class="price">${ECONOMY.costStoryPublish} PUS</div>
         <button class="btn small" data-buy="publish">Купить</button>
       </div>
       <div class="shop-item">
-        <div class="info"><div class="name">⭐ Премиум-значок</div><div class="desc">Особый значок в профиле</div></div>
-        <div class="price">🪙 20</div>
+        <div class="info"><div class="name">Премиум-значок</div><div class="desc">Особый значок в профиле</div></div>
+        <div class="price">20 PUS</div>
         <button class="btn small" disabled>Скоро</button>
       </div>
     </div>
@@ -968,7 +966,7 @@ function renderProfile() {
     <div class="card">
       <h3>${escapeHtml(p.name)} <span class="status-badge gold">${rank}</span></h3>
       <div style="margin-top:14px">
-        <div class="transaction"><span>💰 Баланс</span><span class="amount plus">${p.balance} пуаросов</span></div>
+        <div class="transaction"><span>Баланс</span><span class="amount plus">${p.balance} PUS</span></div>
         <div class="transaction"><span>Разгадано загадок</span><span>${p.solved}</span></div>
         <div class="transaction"><span>Загадано загадок</span><span>${p.authored}</span></div>
         <div class="transaction"><span>Написано историй</span><span>${p.storiesWritten}</span></div>
@@ -980,7 +978,7 @@ function renderProfile() {
         p.transactions.slice(0, 15).map(t => `
           <div class="transaction">
             <span>${escapeHtml(t.reason)}</span>
-            <span class="amount ${t.amount > 0 ? 'plus' : 'minus'}">${t.amount > 0 ? '+' : ''}${t.amount} 🪙</span>
+            <span class="amount ${t.amount > 0 ? 'plus' : 'minus'}">${t.amount > 0 ? '+' : ''}${t.amount} PUS</span>
           </div>`).join('')}
     </div>
     <div class="card">
@@ -993,16 +991,16 @@ function renderProfile() {
     <div class="card">
       <h3>Мои загадки (${myRiddles.length})</h3>
       ${myRiddles.length === 0 ? '<div class="empty">Пока ничего</div>' :
-        myRiddles.map(r => `<div class="transaction"><span>${escapeHtml(r.text.slice(0, 50))}…</span><span>${r.solvers.length} ✓</span></div>`).join('')}
+        myRiddles.map(r => `<div class="transaction"><span>${escapeHtml(r.text.slice(0, 50))}…</span><span>${r.solvers.length} разгадали</span></div>`).join('')}
     </div>
     <div class="card">
       <h3>Мои истории (${myStories.length})</h3>
       ${myStories.length === 0 ? '<div class="empty">Пока ничего</div>' :
-        myStories.map(s => `<div class="transaction"><span>${escapeHtml((s.title || s.text).slice(0, 50))}…</span><span>${s.versions.length} 💬</span></div>`).join('')}
+        myStories.map(s => `<div class="transaction"><span>${escapeHtml((s.title || s.text).slice(0, 50))}…</span><span>${s.versions.length} версий</span></div>`).join('')}
     </div>
     <div class="card">
       <h3>Редакторское (для теста)</h3>
-      <button class="btn primary" id="p-close-issue">📖 Закрыть выпуск №${db.issueNumber}</button>
+      <button class="btn primary" id="p-close-issue">Закрыть выпуск №${db.issueNumber}</button>
       <button class="btn danger" id="p-reset" style="margin-left:8px">Сбросить</button>
     </div>
   `;
@@ -1024,7 +1022,7 @@ function renderProfile() {
       });
     });
     db.issueNumber++;
-    DB.save(db); toast('📖 Выпуск закрыт'); renderProfile(); updateHeader();
+    DB.save(db); toast('Выпуск закрыт'); renderProfile(); updateHeader();
   };
   document.getElementById('p-reset').onclick = () => {
     if (confirm('Сбросить?')) {
@@ -1046,7 +1044,6 @@ function switchTab(name) {
   if (name === 'stories') renderStories();
   if (name === 'shop') renderShop();
   if (name === 'profile') renderProfile();
-  // закрыть мобильное меню
   document.getElementById('sidebar').classList.remove('open');
 }
 document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
@@ -1084,7 +1081,7 @@ renderRiddles();
 
 setInterval(() => {
   if (document.getElementById('tab-riddles').classList.contains('hidden')) return;
-  if (riddleView === 'create') return;   // ← не трогаем форму
+  if (riddleView === 'create') return;
   renderRiddles();
 }, 30000);
 </script>
